@@ -97,7 +97,7 @@ export async function signInWithCode(tempToken: string, phone: string, code: str
     })
 
     await client.disconnect()
-    return { success: true, message: "Successfully signed in" }
+    return { success: true, message: newSessionString }
   } catch (error) {
     if (error instanceof Error && error.message.includes("2FA")) {
       return {
