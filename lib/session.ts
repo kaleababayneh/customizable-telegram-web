@@ -3,6 +3,7 @@
 import sessionStore from "./session-store"
 
 export async function setSessionString(sessionToken: string, sessionString: string, ttl?: number): Promise<void> {
+  console.log("Setting session string:", sessionString)
   await sessionStore.setSessionString(sessionToken, sessionString, ttl)
 }
 
