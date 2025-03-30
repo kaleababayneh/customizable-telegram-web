@@ -205,7 +205,7 @@ export default function ChatClient() {
     }
   }
 
-  const filteredDialogs = dialogs; //.filter((dialog) => dialog.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  const filteredDialogs = dialogs.filter((dialog) => dialog.name.toLowerCase().includes(searchQuery.toLowerCase()))
 
   const formatMessageDate = (date: Date) => {
     return format(date, "HH:mm")
