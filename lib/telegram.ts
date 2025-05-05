@@ -7,11 +7,17 @@ import { cookies } from "next/headers"
 import {parse, stringify} from 'flatted';
 import { console } from "inspector"
 
-
-
-const TELEGRAM_APP_ID = process.env.TELEGRAM_APP_ID 
-const TELEGRAM_APP_HASH = process.env.TELEGRAM_APP_HASH 
-const SESSION_STRING = process.env.SESSION_STRING
+// Load and validate environment variables
+const TELEGRAM_APP_ID_ENV = process.env.TELEGRAM_APP_ID
+const TELEGRAM_APP_HASH_ENV = process.env.TELEGRAM_APP_HASH
+if (!TELEGRAM_APP_ID_ENV) {
+  throw new Error('Missing env var TELEGRAM_APP_ID')
+}
+if (!TELEGRAM_APP_HASH_ENV) {
+  throw new Error('Missing env var TELEGRAM_APP_HASH')
+}
+const TELEGRAM_APP_ID = Number(TELEGRAM_APP_ID_ENV)
+const TELEGRAM_APP_HASH = TELEGRAM_APP_HASH_ENV
 
 type AuthResponse = {
   success: boolean
@@ -153,29 +159,13 @@ export async function tfaSignIn(tempToken: string, password: string): Promise<Au
 
 export async function userProfile() {
   
-  const sessionToken = (await cookies()).get("session_token")?.value
-  console.log("sessionToken", sessionToken)
+  // Retrieve session token and string from store
+  const cookieStore = await cookies()
+  const sessionToken = cookieStore.get("session_token")?.value
   if (!sessionToken) return { error: "Not authenticated" }
-
-  // console.log("sessionToken", sessionToken)
-
-  // await setSessionString(sessionToken, newSessionString)
-  // ;(await cookies()).set("session_token", sessionToken, {
-  //   httpOnly: true,
-  //   secure: true,
-  // })
-
-  console.log("sessionToken", sessionToken);
-  // setSessionString(sessionToken, sessionToken)
-  // let sessionString = await getSessionString(sessionToken)
-
-  // console.log("sessionString", sessionString)
-   let sessionString = `${SESSION_STRING}`
-  // console.log("sessionString", sessionString)
-  //sessionString = JSON.parse(JSON.stringify(sessionString))
+  const sessionString = await getSessionString(sessionToken)
   if (!sessionString) return { error: "Session not found" }
 
-  // console.log("sessionString xxx", sessionString)
   const client = await createClient(sessionString)
 
   console.log("clienttttttt", client)
@@ -193,20 +183,13 @@ export async function userProfile() {
 }
 
 export async function getDialogs(limit = 1) {
-  // const sessionToken = (await cookies()).get("session_token")?.value
-  // if (!sessionToken) return { error: "Not authenticated" }
-
-  // const sessionString = await getSessionString(sessionToken)
-  // if (!sessionString) return { error: "Session not found" }
-
-  // const client = await createClient(sessionString)
-
-  let sessionString = `${SESSION_STRING}`
-  // console.log("sessionString", sessionString)
-  // sessionString = JSON.parse(JSON.stringify(sessionString))
+  // Retrieve session token and string from store
+  const cookieStore = await cookies()
+  const sessionToken = cookieStore.get("session_token")?.value
+  if (!sessionToken) return { error: "Not authenticated" }
+  const sessionString = await getSessionString(sessionToken)
   if (!sessionString) return { error: "Session not found" }
 
-  // console.log("sessionString xxx", sessionString)
   const client = await createClient(sessionString)
 
 
